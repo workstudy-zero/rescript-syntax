@@ -481,6 +481,12 @@ let normalize =
           );
           pexp_attributes = ternaryMarker::expr.pexp_attributes;
         }
+      | Pexp_constraint (expr, typ) ->
+        {
+          pexp_loc = expr.pexp_loc;
+          pexp_attributes = mapper.attributes mapper expr.pexp_attributes;
+          pexp_desc = Pexp_constraint (mapper.expr mapper expr, mapper.typ mapper typ)
+        }
       | _ -> default_mapper.expr mapper expr
     );
     structure_item = begin fun mapper structureItem ->
@@ -499,6 +505,17 @@ let normalize =
             default_mapper.type_declaration mapper typeDeclaration
           ) typeDeclarations
         )}
+      | Pstr_value (recFlag, valueBindings) ->
+        let newBindings =
+          valueBindings |> List.map (fun (binding: Parsetree.value_binding) ->
+            {binding with
+              pvb_attributes = mapper.attributes mapper binding.pvb_attributes;
+              pvb_pat = mapper.pat mapper binding.pvb_pat;
+              pvb_expr = mapper.expr mapper binding.pvb_expr
+            }
+          )
+        in
+        {structureItem with pstr_desc = Pstr_value (recFlag, newBindings)}
       | _ -> default_mapper.structure_item mapper structureItem
     end;
     signature_item = begin fun mapper signatureItem ->

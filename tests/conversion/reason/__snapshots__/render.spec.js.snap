@@ -1266,6 +1266,8 @@ type propField<'a> = Js.nullable<{..} as 'a>
 type propField<'a> = {\\"a\\": b}
 type propField<'a> = {..\\"a\\": b}
 type propField<'a> = {\\"a\\": {\\"b\\": c}}
+
+let a: Js.t<{\\"a\\": b}> = 1
 "
 `;
 
@@ -1278,6 +1280,8 @@ type propField<'a> = Js.nullable<{..} as 'a>
 type propField<'a> = {\\"a\\": b}
 type propField<'a> = {..\\"a\\": b}
 type propField<'a> = {\\"a\\": {\\"b\\": c}}
+
+let a: {\\"a\\": b}
 "
 `;
 
